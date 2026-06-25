@@ -102,24 +102,14 @@
     let currentMarketPrices = { gold: 2345.50, bitcoin: 64200.00, ethereum: 3450.00 };
     let selectedAsset = '';
 
-    const myWhatsAppNumber = "9779849719489"; 
+    // तपाईंको सही नम्बर यहाँ राखिएको छ
+    const myWhatsAppNumber = "9779749719489"; 
 
-    async function refreshMarketPrices() {
-        try {
-            const apiResponse = await fetch('https://coingecko.com');
-            if (apiResponse.ok) {
-                const fetchedData = await apiResponse.json();
-                currentMarketPrices.bitcoin = fetchedData.bitcoin.usd;
-                currentMarketPrices.ethereum = fetchedData.ethereum.usd;
-            } else {
-                currentMarketPrices.bitcoin += (Math.random() - 0.5) * 50;
-                currentMarketPrices.ethereum += (Math.random() - 0.5) * 5;
-            }
-        } catch (err) {
-            currentMarketPrices.bitcoin += (Math.random() - 0.5) * 40;
-            currentMarketPrices.ethereum += (Math.random() - 0.5) * 4;
-        }
-        currentMarketPrices.gold = parseFloat((currentMarketPrices.gold + (Math.random() - 0.5) * 3).toFixed(2));
+    function refreshMarketPrices() {
+        currentMarketPrices.bitcoin += (Math.random() - 0.5) * 40;
+        currentMarketPrices.ethereum += (Math.random() - 0.5) * 4;
+        currentMarketPrices.gold = parseFloat((currentMarketPrices.gold + (Math.random() - 0.5) * 2).toFixed(2));
+        
         renderMarketUI();
         renderPortfolioUI();
     }
@@ -160,7 +150,7 @@
         const amt = document.getElementById('deposit-amount').value;
         if(!amt) { alert("कृपया रकम हाल्नुहोस्"); return; }
         
-        const message = `नमस्ते सर, म तपाईंको वेबसाइट मार्फत वास्तविक पैसा इन्भेस्ट गर्न चाहन्छु। मैले जम्मा करना खोजेको रकम: ${amt} हो। मलाई पेमेन्ट क्युआर वा बैंक खाता पठाइदिनुहोस्।`;
+        const message = `नमस्ते सर, म तपाईंको वेबसाइट मार्फत वास्तविक पैसा इन्भेस्ट गर्न चाहन्छु। मैले जम्मा गर्न खोजेको रकम: ${amt} हो। मलाई पेमेन्ट क्युआर वा बैंक खाता पठाइदिनुहोस्।`;
         const whatsappUrl = `https://wa.me{myWhatsAppNumber}?text=${encodeURIComponent(message)}`;
         window.open(whatsappUrl, '_blank');
     }
@@ -184,3 +174,14 @@
                 assets.real[selectedAsset] += calculatedUnits;
                 alert("बधाई छ! वास्तविक पैसाबाट रियल खरिद भयो!");
             } else {
+                alert("तपाईंसँग पर्याप्त ब्यालेन्स छैन!");
+                return;
+            }
+        } else if (actionType === 'sell') {
+            if (wallet === 'virtual' && assets.virtual[selectedAsset] >= calculatedUnits) {
+                vBalance += usdValue;
+                assets.virtual[selectedAsset] -= calculatedUnits;
+                alert("भर्चुअल एसेट बिक्री भयो!");
+            } else if (wallet === 'real' && assets.real[selectedAsset] >= calculatedUnits) {
+                rBalance += usdValue;
+                assets.real[selectedAsset] -= calculatedUnits;
