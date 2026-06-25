@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="ne">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Gold & Crypto Hub - Practice & Invest</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
+        body { background-color: #0d0e12; color: #e9ecef; padding: 15px; display: flex; justify-content: center; }
+        .app-container { width: 100%; max-width: 500px; background: #161a25; padding: 25px; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.4); border: 1px solid #2b313f; }
+        h1 { font-size: 1.6rem; color: #f3ba2f; text-align: center; margin-bottom: 5px; }
+        .tagline { text-align: center; color: #9096a2; font-size: 0.85rem; margin-bottom: 20px; }
+        .balance-section { display: flex; gap: 10px; margin-bottom: 25px; }
+        .balance-card { flex: 1; background: #1e222d; padding: 12px; border-radius: 12px; text-align: center; border: 1px solid #363c4e; }
+        .balance-card p { font-size: 0.8rem; color: #9096a2; }
+        .balance-amount { font-size: 1.3rem; font-weight: bold; margin-top: 5px; }
+        .virtual { color: #02c076; }
+        .real { color: #ffbc00; }
+        h2 { font-size: 1.1rem; color: #f3ba2f; margin-bottom: 12px; border-bottom: 1px solid #2b313f; padding-bottom: 5px; }
+        .market-row { display: flex; justify-content: space-between; align-items: center; background: #1e222d; padding: 15px; border-radius: 10px; margin-bottom: 10px; border: 1px solid #232836; }
+        .live-price { font-weight: 600; color: #02c076; }
+        .btn-trade { background: #f3ba2f; color: #000; border: none; padding: 8px 14px; border-radius: 6px; font-weight: bold; cursor: pointer; }
+        .invest-banner { background: linear-gradient(135deg, #ffbc00, #fe8c00); color: #000; padding: 15px; border-radius: 12px; font-weight: bold; text-align: center; margin-bottom: 20px; cursor: pointer; }
+        .trade-panel { display: none; background: #1e222d; padding: 20px; border-radius: 12px; border: 1px solid #f3ba2f; margin-bottom: 15px; }
+        .input-group { margin-bottom: 15px; }
+        .input-group label { display: block; font-size: 0.8rem; color: #9096a2; margin-bottom: 5px; }
+        .input-group input, .input-group select { width: 100%; padding: 10px; background: #161a25; border: 1px solid #363c4e; color: #fff; border-radius: 6px; }
+        .btn-action { width: 48%; padding: 10px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; color: #fff; }
+        .btn-buy { background: #02c076; }
+        .btn-sell { background: #cf304a; }
+        .portfolio-box { background: #1e222d; padding: 15px; border-radius: 10px; font-size: 0.9rem; }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    <h1>Live Market Dashboard</h1>
+    <p class="tagline">ट्रेनिङ गर्नुहोस् र रियल मनी इन्भेस्ट गर्नुहोस्</p>
+
+    <div class="balance-section">
+        <div class="balance-card">
+            <p>भर्चुअल फन्ड (नक्कली)</p>
+            <div class="balance-amount virtual" id="v-balance">$10,000.00</div>
+        </div>
+        <div class="balance-card">
+            <p>रियल फन्ड (वास्तविक)</p>
+            <div class="balance-amount real" id="r-balance">$0.00</div>
+        </div>
+    </div>
+
+    <div class="invest-banner" onclick="openDepositWindow()">
+        💰 वास्तविक पैसा इन्भेस्ट गर्नुहोस् (Deposit Real Money)
+    </div>
+
+    <h2>लाइभ रेट (Live Rates)</h2>
+    <div id="market-container">
+        <p style="text-align: center; color: #9096a2;">लोड हुँदैछ...</p>
+    </div>
+
+    <div class="trade-panel" id="trading-window">
+        <h3 id="panel-title" style="margin-bottom:10px;">अर्डर प्यानल</h3>
+        <div class="input-group">
+            <label>कुन पैसा प्रयोग गर्ने?</label>
+            <select id="wallet-type">
+                <option value="virtual">भर्चुअल ब्यालेन्स (नक्कली)</option>
+                <option value="real">रियल ब्यालेन्स (वास्तविक)</option>
+            </select>
+        </div>
+        <div class="input-group">
+            <label>लगानी रकम (USD):</label>
+            <input type="number" id="trade-usd-amount" placeholder="रकम हाल्नुहोस्">
+        </div>
+        <div style="display:flex; justify-content:space-between;">
+            <button class="btn-action btn-buy" onclick="processOrder('buy')">किन्नुहोस् (Buy)</button>
+            <button class="btn-action btn-sell" onclick="processOrder('sell')">बेच्नुहोस् (Sell)</button>
+        </div>
+        <button onclick="closeTradingWindow()" style="width:100%; margin-top:10px; background:#444; border:none; color:#fff; padding:5px; border-radius:5px;">रद्द गर्नुहोस्</button>
+    </div>
+
+    <div class="trade-panel" id="deposit-window">
+        <h3>वास्तविक पैसा जम्मा (Deposit)</h3>
+        <p style="font-size:0.85rem; color:#9096a2; margin-bottom:15px;">नेपालबाट eSewa/Khalti वा बैंक मार्फत लगानी गर्न तलको बटन थिचेर हामीलाई सिधै सम्पर्क गर्नुहोस्।</p>
+        <div class="input-group">
+            <label>जम्मा गर्न खोज्नुभएको रकम (रु वा $):</label>
+            <input type="text" id="deposit-amount" placeholder="उदाहरण: Rs. 5000">
+        </div>
+        <button onclick="sendDepositRequest()" style="width:100%; background:#02c076; color:#fff; padding:10px; font-weight:bold; border:none; border-radius:6px; cursor:pointer;">व्हाट्सएप मार्फत पैसा लोड गर्नुहोस्</button>
+        <button onclick="document.getElementById('deposit-window').style.display='none'" style="width:100%; margin-top:5px; background:#444; border:none; color:#fff; padding:5px; border-radius:5px;">बन्द गर्नुहोस्</button>
+    </div>
+
+    <h2>तपाईंको होल्डिङ (Portfolio)</h2>
+    <div class="portfolio-box" id="portfolio-container">लोड हुँदैछ...</div>
+</div>
+
+<script>
+    let vBalance = 10000.00;
+    let rBalance = 0.00;
+    let assets = {
+        virtual: { gold: 0, bitcoin: 0, ethereum: 0 },
+        real: { gold: 0, bitcoin: 0, ethereum: 0 }
+    };
+    let currentMarketPrices = { gold: 2345.50, bitcoin: 64200.00, ethereum: 3450.00 };
+    let selectedAsset = '';
+
+    const myWhatsAppNumber = "9779849719489"; 
+
+    async function refreshMarketPrices() {
+        try {
+            const apiResponse = await fetch('https://coingecko.com');
+            if (apiResponse.ok) {
+                const fetchedData = await apiResponse.json();
+                currentMarketPrices.bitcoin = fetchedData.bitcoin.usd;
+                currentMarketPrices.ethereum = fetchedData.ethereum.usd;
+            }
+            currentMarketPrices.gold = parseFloat((currentMarketPrices.gold + (Math.random() - 0.5) * 3).toFixed(2));
+            renderMarketUI();
+            renderPortfolioUI();
+        } catch (err) {
+            renderMarketUI();
+        }
+    }
+
+    function renderMarketUI() {
+        const container = document.getElementById('market-container');
+        const assetList = [
+            { id: 'gold', name: 'Gold (सुन)', price: currentMarketPrices.gold },
+            { id: 'bitcoin', name: 'Bitcoin (BTC)', price: currentMarketPrices.bitcoin },
+            { id: 'ethereum', name: 'Ethereum (ETH)', price: currentMarketPrices.ethereum }
+        ];
+
+        container.innerHTML = assetList.map(asset => `
+            <div class="market-row" style="padding: 10px; margin-bottom: 5px; border-bottom: 1px solid #232836;">
+                <div style="font-weight:bold;">${asset.name}</div>
+                <div class="live-price">$${asset.price.toLocaleString()}</div>
+                <button class="btn-trade" onclick="initiateTrade('${asset.id}')">Trade</button>
+            </div>
+        `).join('');
+    }
+
+    function initiateTrade(assetId) {
+        selectedAsset = assetId;
+        document.getElementById('trading-window').style.display = 'block';
+        document.getElementById('panel-title').innerText = `${assetId.toUpperCase()} अर्डर प्यानल`;
+    }
+
+    function closeTradingWindow() {
+        document.getElementById('trading-window').style.display = 'none';
+        document.getElementById('trade-usd-amount').value = '';
+    }
+
+    function openDepositWindow() {
+        document.getElementById('deposit-window').style.display = 'block';
+    }
+
+    function sendDepositRequest() {
+        const amt = document.getElementById('deposit-amount').value;
+        if(!amt) { alert("कृपया रकम हाल्नुहोस्"); return; }
+        
+        const message = `नमस्ते सर, म तपाईंको वेबसाइट मार्फत वास्तविक पैसा इन्भेस्ट गर्न चाहन्छु। मैले जम्मा गर्न खोजेको रकम: ${amt} हो। मलाई पेमेन्ट क्युआर वा बैंक खाता पठाइदिनुहोस्।`;
+        const whatsappUrl = `https://wa.me{myWhatsAppNumber}?text=${encodeURIComponent(message)}`;
+        window.open(whatsappUrl, '_blank');
+    }
+
+    function processOrder(actionType) {
+        const usdValue = parseFloat(document.getElementById('trade-usd-amount').value);
+        const wallet = document.getElementById('wallet-type').value;
+
+        if (isNaN(usdValue) || usdValue <= 0) { alert("सही रकम राख्नुहोस्!"); return; }
+
+        const currentAssetPrice = currentMarketPrices[selectedAsset];
+        const calculatedUnits = usdValue / currentAssetPrice;
+
+        if (actionType === 'buy') {
+            if (wallet === 'virtual' && vBalance >= usdValue) {
+                vBalance -= usdValue;
+                assets.virtual[selectedAsset] += calculatedUnits;
+                alert("भर्चुअल ब्यालेन्सबाट खरिद भयो!");
+            } else if (wallet === 'real' && rBalance >= usdValue) {
+                rBalance -= usdValue;
+                assets.real[selectedAsset] += calculatedUnits;
+                alert("बधाई छ! वास्तविक पैसाबाट रियल खरिद भयो!");
+            } else {
+                alert("तपाईंसँग पर्याप्त ब्यालेन्स छैन!");
+                return;
+            }
+        } else if (actionType === 'sell') {
+            if (wallet === 'virtual' && assets.virtual[selectedAsset] >= calculatedUnits) {
+                vBalance += usdValue;
+                assets.virtual[selectedAsset] -= calculatedUnits;
